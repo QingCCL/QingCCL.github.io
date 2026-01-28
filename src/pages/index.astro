@@ -1,0 +1,33 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import home from "../assets/home.webp";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+import RecentPublications from "../components/RecentPublications.astro";
+---
+
+<!doctype html>
+<html lang="zh">
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
+  <body class="w-full max-w-screen-md mx-auto my-4 dark:bg-neutral-800 dark:text-neutral-300 transition-colors duration-300" >
+    <Header />
+    <main class="flex flex-col justify-center">
+      <div class="px-4 md:px-16 flex flex-col gap-4 md:my-10">
+        <h1 class="text-2xl md:text-5xl w-full">QingCCL</h1>
+        <p class="w-full text-justify text-base md:text-lg">
+            青山、稻田、飞鸟，冥冥之中看见了无数的我。
+        </p>
+      </div>
+      <div class="w-full flex flex-col items-center gap-2.5 px-4 lg:px-0 mt-6">
+        <img src={home.src} alt="Astronaut"/>
+        <p class="italic text-xs text-gray-600 dark:text-neutral-400">2020年8月3日 北京-东城区</p>
+      </div>
+	  <RecentPublications />
+	      </main>
+    <Footer />
+  </body>
+</html>
+
