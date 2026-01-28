@@ -51,10 +51,12 @@ const { title, description, pubDate, heroImage, tags } = Astro.props;
         </div>
       </article>
       <br><br><br><br><br><br>
+
       <script src="https://giscus.app/client.js"
               data-repo="QingCCL/QingCCL.github.io"
-              data-repo-id="R_kgDORC4sXA"
-              data-category-id="DIC_kwDORC4sXM4C1hmE"
+              data-repo-id="R_kgDORDBOAw"
+              data-category="Announcements"
+              data-category-id="DIC_kwDORDBOA84C1hvs"
               data-mapping="pathname"
               data-strict="0"
               data-reactions-enabled="1"
@@ -80,10 +82,8 @@ const { title, description, pubDate, heroImage, tags } = Astro.props;
           sendMessage(isDark ? 'dark_dimmed' : 'light');
         }
 
-        // 页面加载时同步一次
         window.addEventListener('load', updateGiscusTheme);
 
-        // 监听你网站的主题切换（class 变化）
         const observer = new MutationObserver(updateGiscusTheme);
         observer.observe(document.documentElement, {
           attributes: true,
