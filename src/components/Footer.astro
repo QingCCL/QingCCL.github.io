@@ -7,6 +7,8 @@ const today = new Date();
 <footer class="mt-20 md:mt-36 mx-4">
   <div class="flex gap-4 border-b pb-8 mb-5 flex-col lg:flex-row  ">
     <div class="w-full lg:w-2/3">
+      <p class="text-sm">
+
     </div>
     <div class="flex lg:ml-auto gap-10 mt-1">
       <div>
@@ -22,6 +24,8 @@ const today = new Date();
     </div>
   </div>
   <p class="text-sm font-medium mb-10">
-    &copy; {today.getFullYear()} QingCCL.
+    &copy; {today.getFullYear()} QingCCL.  <span id="vercount_value_site_pv">Loading</span>访问
+    <span id="vercount_value_site_uv">Loading</span>总访问
   </p>
+  <script defer src="https://events.vercount.one/js"></script>
 </footer>
