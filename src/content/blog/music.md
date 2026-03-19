@@ -1,6 +1,6 @@
 ---
 title: 'heat waves'
-pubDate: '2026-01-28'
+pubDate: '2026-03-19'
 tags: ['咸']
 ---
 在地平线5中听到了一首歌，heat waves，不过那个是remix版本的，最近又听了原版，豪庭！
