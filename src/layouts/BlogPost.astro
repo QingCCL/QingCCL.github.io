@@ -5,6 +5,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import TagLink from "../components/TagLink.astro";
+import mediumZoom from "medium-zoom";
 
 type Props = CollectionEntry<"blog">["data"];
 
@@ -33,7 +34,7 @@ const { title, description, pubDate, heroImage, tags } = Astro.props;
             )
           }
         </div>
-        <div class="mt-10">
+        <div class="mt-10 post-content">
           <slot />
         </div>
         <div>
@@ -88,6 +89,15 @@ const { title, description, pubDate, heroImage, tags } = Astro.props;
         observer.observe(document.documentElement, {
           attributes: true,
           attributeFilter: ['class'],
+        });
+      </script>
+
+      <script>
+        import mediumZoom from "medium-zoom";
+
+        mediumZoom(".post-content img", {
+          margin: 24,
+          background: "#000000cc",
         });
       </script>
 
