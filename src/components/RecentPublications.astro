@@ -5,7 +5,7 @@ import TagLink from "./TagLink.astro";
 
 const posts = await getCollection("blog");
 const sortedPosts = posts.sort(
-    (a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate)
+    (a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
 );
 let numberOfPostsToDisplay = 5;
 let recentPosts = sortedPosts.slice(0, numberOfPostsToDisplay);
