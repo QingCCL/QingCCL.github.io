@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>日语五十音背诵</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+        }
+
+        body{
+            background:#0d1117;
+            color:#f5f5f5;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .container{
+            width:700px;
+            text-align:center;
+        }
+
+        .card{
+            background:#1e1e1e;
+            border-radius:20px;
+            padding:50px;
+            box-shadow:0 10px 30px rgba(0,0,0,.45);
+            border:1px solid #2c2c2c;
+        }
+
+        .big{
+            font-size:120px;
+            margin:20px;
+            font-weight:bold;
+            color:#ffffff;
+        }
+
+        .middle{
+            font-size:90px;
+            margin:20px;
+            color:#f0f0f0;
+        }
+
+        .roman{
+            font-size:48px;
+            color:#bdbdbd;
+            margin-top:30px;
+        }
+
+        button{
+            margin-top:40px;
+            padding:15px 40px;
+            font-size:24px;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+            background:#2e7d32;
+            color:white;
+            transition:all .2s ease;
+        }
+
+        button:hover{
+            background:#43a047;
+            transform:translateY(-2px);
+        }
+
+        button:active{
+            transform:translateY(0);
+        }
+
+        .setting{
+            margin-bottom:30px;
+            display:flex;
+            justify-content:center;
+            gap:40px;
+            font-size:18px;
+            color:#ddd;
+        }
+
+        .setting label{
+            cursor:pointer;
+            user-select:none;
+        }
+
+        .setting input{
+            accent-color:#4CAF50;
+            transform:scale(1.15);
+            margin-right:6px;
+        }
+
+        .hidden{
+            visibility:hidden;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <div class="setting">
+
+        <label>
+            <input type="checkbox" id="showHira" checked>
+            显示平假名
+        </label>
+
+        <label>
+            <input type="checkbox" id="showKata" checked>
+            显示片假名
+        </label>
+
+        <label>
+            <input type="checkbox" id="showRoma" checked>
+            显示罗马音
+        </label>
+        <label>
+            <input type="checkbox" id="speak" checked>
+            朗读
+        </label>
+
+    </div>
+
+    <div class="card">
+
+        <div id="hiragana" class="big"></div>
+
+        <div id="katakana" class="middle"></div>
+
+        <div id="romaji" class="roman"></div>
+
+        <button onclick="nextKana()">下一个（Space）</button>
+
+    </div>
+
+</div>
+
+<script>
+    const kana = [
+
+        // ["あ","ア","a"],
+        // ["い","イ","i"],
+        // ["う","ウ","u"],
+        // ["え","エ","e"],
+        // ["お","オ","o"],
+        //
+        // ["か","カ","ka"],
+        // ["き","キ","ki"],
+        // ["く","ク","ku"],
+        // ["け","ケ","ke"],
+        // ["こ","コ","ko"],
+        //
+        // ["さ","サ","sa"],
+        // ["し","シ","shi"],
+        // ["す","ス","su"],
+        // ["せ","セ","se"],
+        // ["そ","ソ","so"],
+        //
+        // ["た","タ","ta"],
+        // ["ち","チ","chi"],
+        // ["つ","ツ","tsu"],
+        // ["て","テ","te"],
+        // ["と","ト","to"],
+        //
+        // ["な","ナ","na"],
+        // ["に","ニ","ni"],
+        // ["ぬ","ヌ","nu"],
+        // ["ね","ネ","ne"],
+        // ["の","ノ","no"],
+        //
+        // ["は","ハ","ha"],
+        // ["ひ","ヒ","hi"],
+        // ["ふ","フ","fu"],
+        // ["へ","ヘ","he"],
+        // ["ほ","ホ","ho"],
+        //
+        ["ま","マ","ma"],
+        ["み","ミ","mi"],
+        ["む","ム","mu"],
+        ["め","メ","me"],
+        ["も","モ","mo"],
+        //
+        ["や","ヤ","ya"],
+        ["ゆ","ユ","yu"],
+        ["よ","ヨ","yo"],
+        //
+        ["ら","ラ","ra"],
+        ["り","リ","ri"],
+        ["る","ル","ru"],
+        ["れ","レ","re"],
+        ["ろ","ロ","ro"],
+        //
+        ["わ","ワ","wa"],
+        ["を","ヲ","wo"],
+        ["ん","ン","n"]
+
+    ];
+
+    let currentItem = null;
+
+    // 播放当前发音
+    function speakCurrent(){
+
+        if(!currentItem) return;
+
+        if(!document.getElementById("speak").checked) return;
+
+        speechSynthesis.cancel();
+
+        const utter = new SpeechSynthesisUtterance(currentItem[0]);
+        utter.lang = "ja-JP";
+        utter.rate = 1;
+        utter.pitch = 1;
+        utter.volume = 1;
+
+        speechSynthesis.speak(utter);
+
+    }
+
+    // 刷新页面显示（不换题）
+    function refreshDisplay(){
+
+        if(!currentItem) return;
+
+        const hira = document.getElementById("hiragana");
+        const kata = document.getElementById("katakana");
+        const roma = document.getElementById("romaji");
+
+        hira.textContent = currentItem[0];
+        kata.textContent = currentItem[1];
+        roma.textContent = currentItem[2];
+
+        hira.className = document.getElementById("showHira").checked
+            ? "big"
+            : "big hidden";
+
+        kata.className = document.getElementById("showKata").checked
+            ? "middle"
+            : "middle hidden";
+
+        roma.className = document.getElementById("showRoma").checked
+            ? "roman"
+            : "roman hidden";
+    }
+
+    // 下一题
+    function nextKana(){
+
+        currentItem = kana[Math.floor(Math.random()*kana.length)];
+
+        refreshDisplay();
+
+        speakCurrent();
+
+    }
+
+    // 设置变化
+    document.querySelectorAll("input").forEach(input=>{
+
+        input.addEventListener("change",()=>{
+
+            refreshDisplay();
+
+        });
+
+    });
+
+    // 键盘快捷键
+    document.addEventListener("keydown",(e)=>{
+        switch(e.code){
+
+            case "Space":
+            case "Enter":
+            case "NumpadEnter":
+                e.preventDefault();
+                nextKana();
+                break;
+
+            case "Digit1":
+            case "Numpad1":
+                document.getElementById("showHira").checked =
+                    !document.getElementById("showHira").checked;
+                refreshDisplay();
+                break;
+
+            case "Digit2":
+            case "Numpad2":
+                document.getElementById("showKata").checked =
+                    !document.getElementById("showKata").checked;
+                refreshDisplay();
+                break;
+
+            case "Digit3":
+            case "Numpad3":
+                document.getElementById("showRoma").checked =
+                    !document.getElementById("showRoma").checked;
+                refreshDisplay();
+                break;
+
+            case "Digit4":
+            case "Numpad4   ":
+                document.getElementById("speak").checked =
+                    !document.getElementById("speak").checked;
+                break;
+
+            case "KeyR":
+                speakCurrent();
+                break;
+
+        }
+
+    });
+
+    // 页面首次打开
+    nextKana();
+</script>
+
+</body>
+</html>
