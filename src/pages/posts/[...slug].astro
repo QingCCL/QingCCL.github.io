@@ -149,5 +149,70 @@ const jsonLd = {
             crossorigin="anonymous"
             async>
     </script>
+    <script is:inline>
+      (function() {
+        function getCurrentTheme() {
+          return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        }
+
+        function setGiscusTheme(theme) {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage(
+              {
+                giscus: {
+                  setConfig: {
+                    theme: theme
+                  }
+                }
+              },
+              'https://giscus.app'
+            );
+          }
+        }
+
+        function waitForGiscusAndSetTheme() {
+          let attempts = 0;
+          const maxAttempts = 30; // 最多等待 3 秒（100ms * 30）
+          const interval = setInterval(() => {
+            const iframe = document.querySelector('iframe.giscus-frame');
+            if (iframe && iframe.contentWindow) {
+              clearInterval(interval);
+              setGiscusTheme(getCurrentTheme());
+            }
+            attempts++;
+            if (attempts >= maxAttempts) {
+              clearInterval(interval);
+              console.warn('giscus iframe 未加载，无法设置主题');
+            }
+          }, 100);
+        }
+
+        function observeThemeChanges() {
+          const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+              if (mutation.attributeName === 'class') {
+                const newTheme = getCurrentTheme();
+                setGiscusTheme(newTheme);
+              }
+            }
+          });
+          observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class']
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => {
+            waitForGiscusAndSetTheme();
+            observeThemeChanges();
+          });
+        } else {
+          waitForGiscusAndSetTheme();
+          observeThemeChanges();
+        }
+      })();
+    </script>
 
 </MainGridLayout>
