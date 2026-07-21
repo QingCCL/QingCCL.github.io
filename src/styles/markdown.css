@@ -1,8 +1,8 @@
 @reference "./main.css";
 .custom-md {
 
-    font-size: 1.0625rem;
-    line-height: 1.75;
+    font-size: 1.0625rem !important;
+    line-height: 1.75 !important;
 
     h1 {
         @apply text-3xl;
