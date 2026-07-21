@@ -1,4 +1,8 @@
 .custom-md {
+
+    font-size: 1.0625rem;
+    line-height: 1.75;
+
     h1 {
         @apply text-3xl;
     }
@@ -120,5 +124,11 @@
     
 }
 .custom-md table {
-    font-size: 1rem;
+    font-size: 1.0625rem;
+
+    strong{
+        font-size: 1.2rem;
+    }
 }
+
+
