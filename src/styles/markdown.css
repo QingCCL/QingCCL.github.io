@@ -1,4 +1,4 @@
-@reference "./main.css";
+@import "./main.css";
 .custom-md {
 
     font-size: 1.0625rem !important;
