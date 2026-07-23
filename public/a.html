@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        /* ----- 全局重置 ----- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1b1b1b;
+            color: #ddd;
+            padding: 16px;
+        }
+
+        /* ----- 主容器 ----- */
+        .container {
+            width: 450px;
+            max-width: 100%;
+            padding: 28px 24px 24px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 14px;
+            letter-spacing: 2px;
+        }
+
+        /* ----- 类型切换 ----- */
+        .options {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin-bottom: 18px;
+            font-size: 14px;
+        }
+        .options label {
+            cursor: pointer;
+            user-select: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .options label:hover {
+            opacity: 1;
+        }
+        .options input[type="radio"] {
+            margin-right: 5px;
+            accent-color: #888;
+        }
+
+        /* ----- 假名显示 ----- */
+        .kana {
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 35px;
+            letter-spacing: 4px;
+            margin: 4px 0 6px;
+        }
+
+        /* ----- 输入框 ----- */
+        input[type="text"] {
+            width: 210px;
+            padding: 11px 8px;
+            background: #111;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 20px;
+            outline: none;
+            transition: border-color 0.2s, background 0.15s;
+        }
+        input[type="text"]:focus {
+            border-color: #999;
+        }
+        input[type="text"]::placeholder {
+            color: #555;
+            font-size: 14px;
+        }
+        /* 错误闪红（临时反馈） */
+        input[type="text"].error-flash {
+            border-color: #e05555;
+            background: #2a1818;
+        }
+
+        /* ----- 消息（完全隐藏） ----- */
+        .msg {
+            height: 0;
+            margin: 0;
+            overflow: hidden;
+            visibility: hidden;
+        }
+
+        /* ----- 进度（进行中显示） ----- */
+        .progress-area {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #aaa;
+            letter-spacing: 0.5px;
+        }
+        .progress-area span {
+            color: #eee;
+            font-weight: 500;
+        }
+        .progress-area .err-count {
+            color: #e05555;
+            margin-left: 12px;
+        }
+
+        /* ----- 信息框（时间和最佳 —— 未结束时隐藏） ----- */
+        .info-box {
+            margin-top: 14px;
+            padding: 12px 0 6px;
+            border-top: 1px solid #3a3a3a;
+            font-size: 13px;
+            color: #999;
+            line-height: 1.9;
+            transition: opacity 0.3s;
+        }
+        .info-box.hidden {
+            display: none;
+        }
+        .info-box .label {
+            color: #777;
+        }
+        .info-box .value {
+            color: #eee;
+            font-weight: 500;
+        }
+        .info-box .best-row {
+            margin-top: 4px;
+        }
+
+        /* ----- 按钮 ----- */
+        button {
+            margin-top: 16px;
+            padding: 8px 24px;
+            background: #3d3d3d;
+            border: none;
+            color: #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+            letter-spacing: 0.5px;
+        }
+        button:hover {
+            background: #555;
+        }
+
+        /* ----- 结果界面 (结束) ----- */
+        .result-box {
+            line-height: 2;
+            color: #ccc;
+            text-align: left;
+            padding: 4px 0;
+        }
+        .result-box .big {
+            font-size: 22px;
+            font-weight: 500;
+            color: #fff;
+            text-align: center;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .result-box .big .penalty-badge {
+            color: #e05555;
+            font-size: 16px;
+            font-weight: 400;
+            margin-left: 4px;
+        }
+        .result-box .stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px solid #333;
+            font-size: 13px;
+        }
+        .result-box .stat:last-child {
+            border-bottom: none;
+        }
+        .result-box .stat .label {
+            color: #888;
+            white-space: nowrap;
+        }
+        .result-box .stat .val {
+            color: #eee;
+            font-weight: 500;
+            text-align: right;
+        }
+        .result-box .stat .highlight {
+            color: #7ccc7c;
+        }
+        .result-box .stat .penalty-text {
+            color: #e05555;
+            font-weight: 500;
+        }
+
+        /* ----- 历史排名列表 ----- */
+        .rank-list {
+            margin-top: 10px;
+            max-height: 220px;
+            overflow-y: auto;
+            font-size: 12px;
+            border-top: 1px solid #3a3a3a;
+            padding-top: 8px;
+        }
+        .rank-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .rank-list::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+        .rank-list .row {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 4px 6px;
+            border-radius: 3px;
+            color: #aaa;
+            gap: 8px;
+            flex-wrap: nowrap;
+            line-height: 1.6;
+        }
+        .rank-list .row.current {
+            background: #3a3a3a;
+            color: #fff;
+            font-weight: 500;
+        }
+        .rank-list .row .pos {
+            color: #666;
+            width: 30px;
+            text-align: right;
+            flex-shrink: 0;
+            font-size: 11px;
+        }
+        .rank-list .row.current .pos {
+            color: #aaa;
+        }
+        .rank-list .row .r-time {
+            color: #ddd;
+            flex-shrink: 0;
+            white-space: nowrap;
+            min-width: 70px;
+        }
+        .rank-list .row.current .r-time {
+            color: #fff;
+        }
+        .rank-list .row .r-time .penalty-badge {
+            color: #e05555;
+            font-weight: 500;
+        }
+        .rank-list .row.current .r-time .penalty-badge {
+            color: #ff6b6b;
+        }
+        .rank-list .row .r-errors {
+            color: #c9a87c;
+            flex-shrink: 0;
+            white-space: nowrap;
+            font-size: 11px;
+            min-width: 42px;
+        }
+        .rank-list .row.current .r-errors {
+            color: #e0c090;
+        }
+        .rank-list .row .r-avg {
+            color: #8bc8f0;
+            font-size: 11px;
+            flex-shrink: 0;
+            white-space: nowrap;
+            min-width: 60px;
+        }
+        .rank-list .row.current .r-avg {
+            color: #a0d8ff;
+        }
+        .rank-list .row .r-date {
+            color: #777;
+            font-size: 11px;
+            flex-shrink: 0;
+            white-space: nowrap;
+            margin-left: auto;
+            text-align: right;
+        }
+        .rank-list .row.current .r-date {
+            color: #999;
+        }
+        .rank-list .row .r-star {
+            flex-shrink: 0;
+            font-size: 11px;
+        }
+
+        .no-record {
+            color: #666;
+            font-size: 13px;
+            padding: 6px 0;
+            text-align: center;
+        }
+
+        /* 再来一次按钮在结果中 */
+        .result-box .btn-wrap {
+            text-align: center;
+            margin-top: 14px;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #3a3a3a;
+            margin: 14px 0;
+        }
+
+        /* ----- 响应式：窄屏时排名行可换行 ----- */
+        @media (max-width: 400px) {
+            .rank-list .row {
+                flex-wrap: wrap;
+                gap: 4px 6px;
+            }
+            .rank-list .row .r-date {
+                margin-left: 0;
+                text-align: left;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container" id="app">
+    <!-- 类型切换 -->
+    <div class="options">
+        <label>
+            <input type="radio" name="type" value="hiragana" checked>
+            平假名
+        </label>
+        <label>
+            <input type="radio" name="type" value="katakana">
+            片假名
+        </label>
+    </div>
+
+    <!-- 假名显示 -->
+    <div class="kana" id="kana">あ</div>
+
+    <!-- 输入框 -->
+    <input id="answer" type="text" autocomplete="off" placeholder="输入罗马音">
+
+    <!-- 消息（完全隐藏） -->
+    <div class="msg" id="msg"></div>
+
+    <!-- 进度（进行中始终显示） -->
+    <div class="progress-area">
+        进度：<span id="progress">0 / 46</span>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        剩余：<span id="remain">46</span>
+        <span class="err-count" id="errorDisplay">❌ 0</span>
+    </div>
+
+    <!-- 信息框（时间和最佳 —— 未结束时隐藏） -->
+    <div class="info-box hidden" id="infoBox">
+        <div>
+            <span class="label">⏱ 用时：</span>
+            <span class="value" id="time">0.0s</span>
+        </div>
+        <div class="best-row">
+            <span class="label">🏆 最佳：</span>
+            <span class="value" id="bestDisplay">--</span>
+        </div>
+    </div>
+
+    <!-- 按钮 -->
+    <button id="restartBtn">重新开始</button>
+</div>
+
+<script>
+    // ============================================================
+    //  数据
+    // ============================================================
+    const data = [
+        ["あ", "a"],
+        ["い", "i"],
+        ["う", "u"],
+        ["え", "e"],
+        ["お", "o"],
+        ["か", "ka"],
+        ["き", "ki"],
+        ["く", "ku"],
+        ["け", "ke"],
+        ["こ", "ko"],
+        ["さ", "sa"],
+        ["し", "shi"],
+        ["す", "su"],
+        ["せ", "se"],
+        ["そ", "so"],
+        ["た", "ta"],
+        ["ち", "chi"],
+        ["つ", "tsu"],
+        ["て", "te"],
+        ["と", "to"],
+        ["な", "na"],
+        ["に", "ni"],
+        ["ぬ", "nu"],
+        ["ね", "ne"],
+        ["の", "no"],
+        ["は", "ha"],
+        ["ひ", "hi"],
+        ["ふ", "fu"],
+        ["へ", "he"],
+        ["ほ", "ho"],
+        ["ま", "ma"],
+        ["み", "mi"],
+        ["む", "mu"],
+        ["め", "me"],
+        ["も", "mo"],
+        ["や", "ya"],
+        ["ゆ", "yu"],
+        ["よ", "yo"],
+        ["ら", "ra"],
+        ["り", "ri"],
+        ["る", "ru"],
+        ["れ", "re"],
+        ["ろ", "ro"],
+        ["わ", "wa"],
+        ["を", "wo"],
+        ["ん", "n"]
+    ];
+
+    const TOTAL = data.length; // 46
+
+    // ============================================================
+    //  DOM 引用
+    // ============================================================
+    const kanaEl = document.getElementById('kana');
+    const inputEl = document.getElementById('answer');
+    const msgEl = document.getElementById('msg');
+    const progressEl = document.getElementById('progress');
+    const remainEl = document.getElementById('remain');
+    const errorDisplayEl = document.getElementById('errorDisplay');
+    const timeEl = document.getElementById('time');
+    const bestDisplayEl = document.getElementById('bestDisplay');
+    const infoBox = document.getElementById('infoBox');
+    const restartBtn = document.getElementById('restartBtn');
+    const container = document.getElementById('app');
+
+    // ============================================================
+    //  状态
+    // ============================================================
+    let list = [];
+    let index = 0;
+    let startTime = null; // 首次正确输入时设置
+    let timer = null;
+    let isFinished = false;
+    let isFirstCorrect = true; // 标记是否第一次正确
+    let errorCount = 0; // 错误次数计数器
+
+    // ============================================================
+    //  存储 —— 保留最快 20 条（每种类型独立）
+    //  存储结构 v3: { date, totalTime, errorCount }
+    //  totalTime = 原始用时 + 错误数 × 1秒（加时惩罚）
+    //  排名按 totalTime 升序排列
+    // ============================================================
+    const STORAGE_KEY = 'kana_speed_records_v3';
+
+    function loadRecords() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (typeof parsed === 'object' && parsed !== null) {
+                    if (!Array.isArray(parsed.hiragana)) parsed.hiragana = [];
+                    if (!Array.isArray(parsed.katakana)) parsed.katakana = [];
+                    return parsed;
+                }
+            }
+        } catch (_) { /* ignore */ }
+        return { hiragana: [], katakana: [] };
+    }
+
+    function saveRecords(records) {
+        ['hiragana', 'katakana'].forEach(key => {
+            if (Array.isArray(records[key])) {
+                records[key].sort((a, b) => a.totalTime - b.totalTime);
+                if (records[key].length > 20) {
+                    records[key] = records[key].slice(0, 20);
+                }
+            } else {
+                records[key] = [];
+            }
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    }
+
+    /**
+     * 添加一条新记录
+     * @param {string} type - 'hiragana' 或 'katakana'
+     * @param {number} totalTime - 含加时的总时间（秒）
+     * @param {number} errorCount - 错误次数
+     * @returns {number} rank - 排名（1-based），未进前20返回 -1
+     */
+    function addRecord(type, totalTime, errorCount) {
+        const records = loadRecords();
+        const arr = records[type] || [];
+        const now = new Date();
+        const dateStr =
+            now.getFullYear() + '-' +
+            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+            String(now.getDate()).padStart(2, '0') + ' ' +
+            String(now.getHours()).padStart(2, '0') + ':' +
+            String(now.getMinutes()).padStart(2, '0') + ':' +
+            String(now.getSeconds()).padStart(2, '0');
+
+        const entry = {
+            date: dateStr,
+            totalTime: Math.round(totalTime * 100) / 100,
+            errorCount: errorCount
+        };
+
+        arr.push(entry);
+        arr.sort((a, b) => a.totalTime - b.totalTime);
+
+        let rank = -1;
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i] === entry) {
+                rank = i + 1;
+                break;
+            }
+        }
+
+        if (arr.length > 20) {
+            const removed = arr.splice(20);
+            if (removed.includes(entry)) {
+                rank = -1;
+            }
+        }
+
+        records[type] = arr;
+        saveRecords(records);
+        return rank;
+    }
+
+    /**
+     * 获取指定类型的最佳总时间（含加时）
+     * @param {string} type
+     * @returns {number|null} 最佳 totalTime，无记录返回 null
+     */
+    function getBestTime(type) {
+        const records = loadRecords();
+        const arr = records[type] || [];
+        if (arr.length === 0) return null;
+        return arr[0].totalTime;
+    }
+
+    /**
+     * 获取指定类型的排名列表（前20条，已按 totalTime 排序）
+     * @param {string} type
+     * @returns {Array}
+     */
+    function getRankList(type) {
+        const records = loadRecords();
+        return (records[type] || []).slice();
+    }
+
+    // ============================================================
+    //  工具函数
+    // ============================================================
+    function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function currentType() {
+        return document.querySelector('input[name="type"]:checked').value;
+    }
+
+    function convertKana(hira) {
+        if (currentType() === 'hiragana') return hira;
+        return hira.replace(/[\u3041-\u3096]/g, ch =>
+            String.fromCharCode(ch.charCodeAt(0) + 0x60)
+        );
+    }
+
+    function formatTime(sec) {
+        if (sec === null || sec === undefined) return '--';
+        return sec.toFixed(2) + ' 秒';
+    }
+
+    function formatTimeShort(sec) {
+        return sec.toFixed(2) + 's';
+    }
+
+    // ============================================================
+    //  更新最佳显示（infoBox 中）
+    // ============================================================
+    function updateBestDisplay() {
+        const type = currentType();
+        const best = getBestTime(type);
+        bestDisplayEl.textContent = best !== null ? formatTime(best) : '--';
+    }
+
+    // ============================================================
+    //  错误闪红反馈（辅助）
+    // ============================================================
+    let errorFlashTimer = null;
+
+    function flashError() {
+        inputEl.classList.add('error-flash');
+        if (errorFlashTimer) {
+            clearTimeout(errorFlashTimer);
+            errorFlashTimer = null;
+        }
+        errorFlashTimer = setTimeout(() => {
+            inputEl.classList.remove('error-flash');
+            errorFlashTimer = null;
+        }, 300);
+    }
+
+    // ============================================================
+    //  更新错误显示
+    // ============================================================
+    function updateErrorDisplay() {
+        errorDisplayEl.textContent = '❌ ' + errorCount;
+    }
+
+    // ============================================================
+    //  游戏核心
+    // ============================================================
+    function startGame() {
+        isFinished = false;
+        list = shuffle([...data]);
+        index = 0;
+        startTime = null;
+        isFirstCorrect = true;
+        errorCount = 0;
+        updateErrorDisplay();
+
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+
+        timer = setInterval(() => {
+            if (!isFinished && startTime !== null) {
+                const elapsed = (Date.now() - startTime) / 1000;
+                timeEl.textContent = elapsed.toFixed(1) + 's';
+            } else if (!isFinished && startTime === null) {
+                timeEl.textContent = '0.0s';
+            }
+        }, 100);
+
+        infoBox.classList.add('hidden');
+        showKana();
+        updateBestDisplay();
+
+        inputEl.disabled = false;
+        inputEl.value = '';
+        inputEl.focus();
+        restartBtn.textContent = '重新开始';
+        msgEl.textContent = '';
+    }
+
+    function showKana() {
+        if (index >= list.length) {
+            finishGame();
+            return;
+        }
+
+        kanaEl.textContent = convertKana(list[index][0]);
+        progressEl.textContent = `${index} / ${list.length}`;
+        remainEl.textContent = list.length - index;
+        // 不自动清空输入框，保留用户已输入的内容（但通常在切换时已清空）
+        inputEl.focus();
+    }
+
+    // ============================================================
+    //  ★★★ 核心修改：实时输入检测（替代按空格提交） ★★★
+    // ============================================================
+    inputEl.addEventListener('input', function(e) {
+        // 游戏已结束 或 已完成所有假名 → 忽略输入
+        if (isFinished) return;
+        if (index >= list.length) return;
+
+        const val = this.value.trim().toLowerCase();
+        const target = list[index][1];
+
+        // 空输入 → 不做任何事
+        if (val === '') return;
+
+        // --- 情况1：完全匹配 → 提交成功 ---
+        if (val === target) {
+            // 第一次正确输入 → 启动计时
+            if (isFirstCorrect) {
+                isFirstCorrect = false;
+                startTime = Date.now();
+                timeEl.textContent = '0.0s';
+            }
+            // 移动到下一个假名
+            index++;
+            // 清空输入框并显示下一个
+            this.value = '';
+            showKana();
+            return;
+        }
+
+        // --- 情况2：是当前罗马音的前缀 → 保留输入，等待继续 ---
+        if (target.startsWith(val)) {
+            // 前缀匹配，什么都不做，保留输入
+            return;
+        }
+
+        // --- 情况3：不是前缀 → 清空输入，记错误一次 ---
+        this.value = '';
+        errorCount++;
+        updateErrorDisplay();
+        flashError(); // 视觉反馈
+        // 焦点保持在输入框
+        this.focus();
+    });
+
+    // ============================================================
+    //  ★★★ 移除原来的 keydown 空格提交逻辑（已由 input 事件替代） ★★★
+    //  原代码中的 inputEl.addEventListener('keydown', ...) 已被移除
+    // ============================================================
+
+    // ============================================================
+    //  结束
+    // ============================================================
+    function finishGame() {
+        if (isFinished) return;
+        isFinished = true;
+
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+
+        if (startTime === null) {
+            startTime = Date.now();
+        }
+
+        const rawTime = (Date.now() - startTime) / 1000;
+        const penaltyTime = errorCount * 1;
+        const totalTime = rawTime + penaltyTime;
+        const avgTime = totalTime / TOTAL;
+        const type = currentType();
+
+        const rank = addRecord(type, totalTime, errorCount);
+        const rankList = getRankList(type);
+
+        const rankDisplay = rank > 0 ? `第 ${rank} 名` : '未进前20';
+
+        let listHtml = '';
+        if (rankList.length === 0) {
+            listHtml = '<div class="no-record">暂无记录</div>';
+        } else {
+            rankList.forEach((item, idx) => {
+                const isCurrent = (rank === idx + 1);
+                const avg = item.totalTime / TOTAL;
+                const errCount = item.errorCount || 0;
+                const hasPenalty = errCount > 0;
+
+                const penaltyHTML = hasPenalty ?
+                    `<span class="penalty-badge">(+${errCount}s)</span>` :
+                    '';
+
+                listHtml += `
+                            <div class="row ${isCurrent ? 'current' : ''}">
+                                <span class="pos">#${idx + 1}</span>
+                                <span class="r-time">${formatTimeShort(item.totalTime)}${penaltyHTML}</span>
+                                <span class="r-errors">错误${errCount}个</span>
+                                <span class="r-avg">平均 ${avg.toFixed(2)}s/个</span>
+                                <span class="r-date">${item.date}</span>
+                                ${isCurrent ? '<span class="r-star">⭐</span>' : ''}
+                            </div>
+                        `;
+            });
+        }
+
+        const best = getBestTime(type);
+
+        const penaltyDisplayHTML = errorCount > 0 ?
+            ` <span class="penalty-badge">(+${errorCount}s)</span>` :
+            '';
+
+        const penaltyStatHTML = errorCount > 0 ?
+            `<div class="stat">
+                        <span class="label">➕ 加时惩罚</span>
+                        <span class="val penalty-text">+${errorCount}s（${errorCount}个错误）</span>
+                    </div>` :
+            `<div class="stat">
+                        <span class="label">❌ 错误次数</span>
+                        <span class="val">0 次</span>
+                    </div>`;
+
+        container.innerHTML = `
+                    <h2>🎉 完成！</h2>
+                    <div class="result-box">
+                        <span class="big">${formatTimeShort(totalTime)}${penaltyDisplayHTML}</span>
+
+                        <div class="stat">
+                            <span class="label">⏱ 原始用时</span>
+                            <span class="val">${formatTimeShort(rawTime)}</span>
+                        </div>
+                        ${penaltyStatHTML}
+                        <div class="stat">
+                            <span class="label">📊 平均用时</span>
+                            <span class="val">${avgTime.toFixed(2)} 秒 / 个（含加时）</span>
+                        </div>
+                        <div class="stat">
+                            <span class="label">🏅 排名</span>
+                            <span class="val highlight">${rankDisplay}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="label">🏆 当前类型最佳</span>
+                            <span class="val">${best !== null ? formatTime(best) : '--'}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="label">📝 类型</span>
+                            <span class="val">${type === 'hiragana' ? '平假名' : '片假名'}</span>
+                        </div>
+
+                        <hr>
+
+                        <div style="font-size:14px; color:#999; text-align:center; margin-bottom:6px;">
+                            🏁 最快 20 条排名（含加时）
+                        </div>
+                        <div class="rank-list">
+                            ${listHtml}
+                        </div>
+
+                        <div class="btn-wrap">
+                            <button onclick="location.reload()">🔄 再来一次</button>
+                        </div>
+                    </div>
+                `;
+    }
+
+    // ============================================================
+    //  重新开始
+    // ============================================================
+    function restartGame() {
+        if (isFinished) {
+            location.reload();
+            return;
+        }
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+        location.reload();
+    }
+
+    // ============================================================
+    //  事件绑定
+    // ============================================================
+    // ★★★ 原来的 keydown 空格监听已移除，由 input 事件接管 ★★★
+
+    document.querySelectorAll('input[name="type"]').forEach(el => {
+        el.addEventListener('change', () => {
+            if (!isFinished) {
+                if (confirm('切换类型将重新开始，确定吗？')) {
+                    location.reload();
+                } else {
+                    const current = currentType();
+                    document.querySelectorAll('input[name="type"]').forEach(r => {
+                        r.checked = (r.value === current);
+                    });
+                }
+            } else {
+                location.reload();
+            }
+        });
+    });
+
+    restartBtn.addEventListener('click', restartGame);
+
+    // ============================================================
+    //  初始化
+    // ============================================================
+    startGame();
+
+    // 点击容器聚焦输入
+    container.addEventListener('click', (e) => {
+        if (e.target === container || e.target === kanaEl || e.target.closest('.kana')) {
+            if (!isFinished) inputEl.focus();
+        }
+    });
+</script>
+
+</body>
+
+</html>
