@@ -52,7 +52,6 @@ export async function GET(context: APIContext) {
 		title: siteConfig.title,
 		description: siteConfig.subtitle || "No description",
 		site: context.site ,
-
 		items: feedItems,
 	});
 }
