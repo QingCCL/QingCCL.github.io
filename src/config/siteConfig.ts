@@ -9,7 +9,7 @@ export const siteConfig: SiteConfig = {
 	title: "QingCCL",
 
 	// 站点副标题
-	subtitle: "QingCCL",
+	subtitle: "",
 
 	// 站点 URL
 	site_url: "https://qingccl.com",
@@ -110,7 +110,7 @@ export const siteConfig: SiteConfig = {
 		// 追番页面开关
 		anime: false,
 		// 动态页面开关
-		dynamic: false,
+		dynamic: true,
 	},
 
 	// 分类导航栏开关，在首页和归档页顶部显示分类快捷导航
