@@ -17,7 +17,7 @@ export const commentConfig: CommentConfig = {
 		// 国际推荐: https://cdn.jsdelivr.net/npm/twikoo@1.7.14/dist/twikoo.min.js
 		jsUrl: "https://registry.npmmirror.com/twikoo/1.7.15/files/dist/twikoo.min.js",
 		// Twikoo 自定义 CSS 文件地址，为空则不加载
-		cssUrl: "/assets/css/twikoo-custom.css",
+		// cssUrl: "/assets/css/twikoo-custom.css",
 	},
 
 	//waline评论系统配置
