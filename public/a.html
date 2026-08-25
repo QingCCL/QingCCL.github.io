@@ -414,42 +414,42 @@
         ["く", "ku"],
         ["け", "ke"],
         ["こ", "ko"],
-        ["さ", "sa"],
-        ["し", "shi"],
-        ["す", "su"],
-        ["せ", "se"],
-        ["そ", "so"],
-        ["た", "ta"],
-        ["ち", "chi"],
-        ["つ", "tsu"],
-        ["て", "te"],
-        ["と", "to"],
-        ["な", "na"],
-        ["に", "ni"],
-        ["ぬ", "nu"],
-        ["ね", "ne"],
-        ["の", "no"],
-        ["は", "ha"],
-        ["ひ", "hi"],
-        ["ふ", "fu"],
-        ["へ", "he"],
-        ["ほ", "ho"],
-        ["ま", "ma"],
-        ["み", "mi"],
-        ["む", "mu"],
-        ["め", "me"],
-        ["も", "mo"],
-        ["や", "ya"],
-        ["ゆ", "yu"],
-        ["よ", "yo"],
-        ["ら", "ra"],
-        ["り", "ri"],
-        ["る", "ru"],
-        ["れ", "re"],
-        ["ろ", "ro"],
-        ["わ", "wa"],
-        ["を", "wo"],
-        ["ん", "n"]
+        // ["さ", "sa"],
+        // ["し", "shi"],
+        // ["す", "su"],
+        // ["せ", "se"],
+        // ["そ", "so"],
+        // ["た", "ta"],
+        // ["ち", "chi"],
+        // ["つ", "tsu"],
+        // ["て", "te"],
+        // ["と", "to"],
+        // ["な", "na"],
+        // ["に", "ni"],
+        // ["ぬ", "nu"],
+        // ["ね", "ne"],
+        // ["の", "no"],
+        // ["は", "ha"],
+        // ["ひ", "hi"],
+        // ["ふ", "fu"],
+        // ["へ", "he"],
+        // ["ほ", "ho"],
+        // ["ま", "ma"],
+        // ["み", "mi"],
+        // ["む", "mu"],
+        // ["め", "me"],
+        // ["も", "mo"],
+        // ["や", "ya"],
+        // ["ゆ", "yu"],
+        // ["よ", "yo"],
+        // ["ら", "ra"],
+        // ["り", "ri"],
+        // ["る", "ru"],
+        // ["れ", "re"],
+        // ["ろ", "ro"],
+        // ["わ", "wa"],
+        // ["を", "wo"],
+        // ["ん", "n"]
     ];
     const TOTAL = data.length;
 
@@ -636,13 +636,6 @@
         }
     }
 
-    function cancelSpeech() {
-        try {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-            }
-        } catch (e) {}
-    }
 
     // ============================================================
     //  DOM 元素引用与事件绑定
@@ -722,13 +715,6 @@
         // 重新开始按钮
         restartBtn.addEventListener('click', restartGame);
 
-        // 点击假名重新发音
-        kanaEl.addEventListener('click', () => {
-            if (!isFinished && index < list.length) {
-                const displayKana = convertKana(list[index][0]);
-                speakKana(displayKana);
-            }
-        });
 
         // 点击空白区域聚焦输入框
         container.addEventListener('click', (e) => {
@@ -786,16 +772,12 @@
         remainEl.textContent = list.length - index;
         inputEl.focus();
 
-        // 每次出字时发音
-        speakKana(displayKana);
     }
 
     function finishGame() {
         if (isFinished) return;
         isFinished = true;
 
-        // 取消正在进行的发音
-        cancelSpeech();
 
         if (timer) {
             clearInterval(timer);
@@ -901,7 +883,6 @@
     //  重置游戏（不刷新页面，保留类型选择）
     // ============================================================
     function restartGame() {
-        cancelSpeech();
 
         if (timer) {
             clearInterval(timer);
