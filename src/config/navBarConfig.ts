@@ -84,12 +84,12 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 	// 自定义导航栏链接
 
 	// 文档链接
-	// links.push({
-	// 	name: "文档",
-	// 	url: "https://docs-firefly.cuteleaf.cn",
-	// 	external: true,
-	// 	icon: "material-symbols:docs",
-	// });
+	links.push({
+		name: "开往",
+		url: "https://www.travellings.cn/go.html",
+		external: true,
+		icon: "material-symbols:subway",
+	});
 
 	return { links } as NavBarConfig;
 };
