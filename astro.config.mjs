@@ -45,6 +45,7 @@ import { rehypeMermaid } from "./src/plugins/rehype-mermaid.mjs";
 import { rehypePlantuml } from "./src/plugins/rehype-plantuml.mjs";
 import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
+import { remarkFurigana } from "./src/plugins/remark-furigana.js";
 import { remarkImageGrid } from "./src/plugins/remark-image-grid.js";
 import { remarkMermaid } from "./src/plugins/remark-mermaid.js";
 import { remarkPlantuml } from "./src/plugins/remark-plantuml.js";
@@ -268,6 +269,7 @@ export default defineConfig({
 				remarkReadingTime,
 				remarkImageGrid,
 				remarkExcerpt,
+				remarkFurigana,
 				remarkDirective,
 				remarkSectionize,
 				parseDirectiveNode,
