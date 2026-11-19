@@ -21,7 +21,7 @@ export const siteConfig: SiteConfig = {
 	// 站点关键词
 	keywords: [
 		"kawabata",
-		"读书笔记",
+		"日语笔记",
 		"技术",
 		"学习",
 		"博客",

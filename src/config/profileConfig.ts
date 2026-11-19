@@ -12,7 +12,7 @@ export const profileConfig: ProfileConfig = {
 	name: "Kawabata",
 
 	// 个人签名
-	bio: "<p>你消磨了岁月，岁月也消磨了你</p><p>你至今没有写出诗</p>",
+	bio: "人是自由的。哎呀，你应当想象。",
 
 	// 链接配置
 	// 已经预装的图标集：fa7-brands，fa7-regular，fa7-solid，material-symbols，simple-icons
