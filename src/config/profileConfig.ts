@@ -9,7 +9,7 @@ export const profileConfig: ProfileConfig = {
 	// avatar: "assets/images/avatar.avif",
 
 	// 名字
-	name: "QingCCL",
+	name: "Kawabata",
 
 	// 个人签名
 	bio: "<p>你消磨了岁月，岁月也消磨了你</p><p>你至今没有写出诗</p>",
